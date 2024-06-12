@@ -11,7 +11,7 @@ import { Button } from "./ui/button";
 export default function CreatePost() {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger className="w-full">
         <div className="flex p-6 border-b justify-between">
           <div className="flex gap-3 text-foreground/40 items-center">
             <img
