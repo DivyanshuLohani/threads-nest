@@ -1,12 +1,57 @@
+import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
+import api from "../api/api";
+import useAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { getUserData } from "../api/data";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const accessToken = sessionStorage.getItem("access") as string;
+    if (!auth && accessToken) {
+      getUserData().then((d) => {
+        setAuth(d);
+        navigate("/");
+      });
+    }
+  });
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+      const { access, refresh } = response.data as {
+        access: string;
+        refresh: string;
+      };
+
+      sessionStorage.setItem("access", access);
+      sessionStorage.setItem("refresh", refresh);
+
+      const userResponse = await getUserData();
+      setAuth(userResponse);
+
+      navigate("/");
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black">
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center">Login to Threads</h2>
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label
               htmlFor="email"
@@ -19,7 +64,10 @@ const Login = () => {
               name="email"
               type="email"
               required
+              placeholder="jhondoe@example.com"
               className="w-full px-3 py-2 mt-1 border rounded-md"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div>
@@ -33,25 +81,15 @@ const Login = () => {
               id="password"
               name="password"
               type="password"
+              placeholder="Password"
               required
               className="w-full px-3 py-2 mt-1 border rounded-md "
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {/* <input
-                id="remember_me"
-                name="remember_me"
-                type="checkbox"
-                className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-              />
-              <label
-                htmlFor="remember_me"
-                className="block ml-2 text-sm text-gray-900"
-              >
-                Remember me
-              </label> */}
-            </div>
+            <div className="flex items-center"></div>
             <div className="text-sm">
               <a href="#" className="font-medium text-primary">
                 Forgot your password?
@@ -64,12 +102,12 @@ const Login = () => {
         </form>
         <p className="mt-2 text-sm text-center text-foreground/50">
           Don't have an account?{" "}
-          <a
-            href="#"
+          <Link
+            to="/signup"
             className="font-medium text-primary hover:text-primary/50 transition-colors duration-300"
           >
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

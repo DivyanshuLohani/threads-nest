@@ -56,11 +56,8 @@ export default function Navbar() {
                 const Icon = link.element;
                 if (link.mobileOnly && !isMobile) return null;
                 return (
-                  <Link to={link.href}>
-                    <li
-                      key={index}
-                      className="p-5 text-3xl hover:text-white transition-colors duration-300 cursor-pointer hover:bg-muted rounded-lg"
-                    >
+                  <Link to={link.href} key={index}>
+                    <li className="p-5 text-3xl hover:text-white transition-colors duration-300 cursor-pointer hover:bg-muted rounded-lg">
                       <Icon />
                     </li>
                   </Link>
@@ -79,16 +76,13 @@ export default function Navbar() {
         <div className="p-5 text-3xl hover:text-white text-gray-400 cursor-pointer transition-colors duration-300">
           <FaThreads />
         </div>
-        <ul className="flex fixed bottom-0 left-0 w-screen justify-between gap-2 text-gray-400 backdrop-blur-lg border-t">
+        <ul className="flex fixed bottom-0 left-0 w-screen justify-between gap-2 text-gray-400 bg-card backdrop-blur-lg border-t">
           {links.map((link, index) => {
             const Icon = link.element;
 
             return (
-              <Link to={link.href}>
-                <li
-                  key={index}
-                  className="p-5 text-3xl hover:text-white transition-colors duration-300 cursor-pointer hover:bg-muted rounded-lg"
-                >
+              <Link to={link.href} key={index}>
+                <li className="p-5 text-3xl hover:text-white transition-colors duration-300 cursor-pointer hover:bg-muted rounded-lg">
                   <Icon />
                 </li>
               </Link>
