@@ -1,10 +1,9 @@
 import { Dispatch, SetStateAction, createContext, useState } from "react";
 import { ReactNode } from "react";
+import { IThreadUser } from "../types/client";
 
-interface AuthState {
-  fullName: string;
+interface AuthState extends IThreadUser {
   email: string;
-  bio: string;
 }
 
 export interface AuthContextValue {

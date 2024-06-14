@@ -1,10 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import api from "../api/api";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
 import { getUserData } from "../api/data";
+import { loginUser } from "../api/action";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,17 +26,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/auth/login", {
-        email,
-        password,
-      });
-      const { access, refresh } = response.data as {
-        access: string;
-        refresh: string;
-      };
-
-      sessionStorage.setItem("access", access);
-      sessionStorage.setItem("refresh", refresh);
+      await loginUser(email, password);
 
       const userResponse = await getUserData();
       setAuth(userResponse);

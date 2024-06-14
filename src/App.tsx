@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import Register from "./pages/Register";
+import AccountPage from "./pages/AccountPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               {/* Protected Routes */}
               <Route element={<RequireAuth />}>
                 <Route path="/" element={<HomePage />}></Route>
+                <Route path="/:username" element={<AccountPage />}></Route>
               </Route>
             </Route>
           </Routes>

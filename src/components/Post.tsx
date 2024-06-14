@@ -1,12 +1,29 @@
 import { FaRegPaperPlane, FaRegHeart, FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
+import { IThread } from "../types/client";
+import { timeAgo } from "../lib/utils";
+import { useEffect, useState } from "react";
+import { FaHeart } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
-export default function Post() {
+export default function Post({ thread }: { thread: IThread }) {
+  const [liked, setLiked] = useState(false);
+  const [likes, setLikes] = useState(thread.likesCount);
+
+  useEffect(() => {
+    if (liked) setLikes((l) => l + 1);
+    else setLikes((l) => Math.max(l - 1, 0));
+  }, [liked]);
+
+  // useEffect(() => {
+  //   if (thread.)
+  // }, [thread])
+
   return (
     <div className="flex p-5 gap-3">
-      <div className="w-1/5">
+      <div className="">
         <img
-          src="https://randomuser.me/api/portraits/women/43.jpg"
+          src={thread.user.profilePicture}
           alt="profile image"
           className=" w-14 rounded-full p-1 border"
           draggable={false}
@@ -14,19 +31,19 @@ export default function Post() {
       </div>
       <div className="flex flex-col">
         <div className="flex gap-2">
-          <span className="font-bold hover:underline cursor-pointer">
-            Username
+          <Link
+            to={`/${thread.user.username}`}
+            className="font-bold hover:underline cursor-pointer"
+          >
+            {thread.user.username}
+          </Link>
+          <span className="text-foreground/30">
+            {timeAgo(thread.createdAt)}
           </span>
-          <span className="text-foreground/30">6h</span>
         </div>
 
         <div className="content">
-          <span>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Aliquid,
-            earum tenetur molestias ad quibusdam quae velit. Expedita
-            temporibus, repellendus qui voluptates aliquam illum earum officia
-            sunt tempora ex magnam rem.
-          </span>
+          <span>{thread.content}</span>
         </div>
         {/* <div className="object-contain">
           <img
@@ -37,16 +54,20 @@ export default function Post() {
 
         <div className="mt-10 w-full text-2xl text-foreground/60  justify-self-end">
           <ul className="flex gap-3 w-full -ml-3">
-            <li className="hover:text-primary cursor-pointer px-3 py-2 flex items-center justify-center rounded-lg  hover:bg-foreground/10 transition-colors duration-300">
-              <FaRegHeart /> <span className="text-lg ml-1">10</span>
+            <li
+              className="hover:text-primary cursor-pointer px-3 py-2 flex items-center justify-center rounded-lg  hover:bg-foreground/10 transition-colors duration-300"
+              onClick={() => setLiked(!liked)}
+            >
+              {liked ? <FaHeart className="text-red-900" /> : <FaRegHeart />}
+              <span className="text-lg ml-1">{likes}</span>
             </li>
             <li className="hover:text-primary cursor-pointer px-3  py-2 flex items-center justify-center rounded-lg hover:bg-foreground/10 transition-colors duration-300">
               <FaRegComment />
-              <span className="text-lg ml-1">10</span>
+              <span className="text-lg ml-1">{thread.reThreadsCount}</span>
             </li>
             <li className="hover:text-primary cursor-pointer px-3 py-2 flex items-center justify-center rounded-lg  hover:bg-foreground/10 transition-colors duration-300">
               <BiRepost />
-              <span className="text-lg ml-1">10</span>
+              {/* <span className="text-lg ml-1">10</span> */}
             </li>
             <li className="hover:text-primary cursor-pointer px-3 py-2 flex items-center justify-center rounded-lg  hover:bg-foreground/10 transition-colors duration-300">
               <FaRegPaperPlane />

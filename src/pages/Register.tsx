@@ -4,6 +4,9 @@ import { Input } from "../components/ui/input";
 import api from "../api/api";
 import useAuth from "../hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../api/action";
+import { getUserData } from "../api/data";
+import { useDebounce } from "use-debounce";
 
 const Register = () => {
   const [email, setEmail] = useState("");
@@ -13,29 +16,21 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const { setAuth } = useAuth();
   const navigate = useNavigate();
+  const [debounceUsername] = useDebounce(username, 300);
 
   const handleSignup = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/auth/register", {
+      await api.post("/auth/register", {
         email,
         password,
         fullName: name,
+        username: debounceUsername,
       });
-      const { access, refresh } = response.data as {
-        access: string;
-        refresh: string;
-      };
-      const userResponse = await api.get("/auth/user", {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-      });
-      setAuth(userResponse.data);
-
-      sessionStorage.setItem("access", access);
-      sessionStorage.setItem("refresh", refresh);
+      await loginUser(email, password);
+      const userdata = await getUserData();
+      setAuth(userdata);
 
       navigate("/");
     } catch (e) {
@@ -44,9 +39,9 @@ const Register = () => {
   };
 
   const checkUsername = async () => {
-    if (!username) return;
+    if (!debounceUsername) return;
     try {
-      await api.get(`/u/${username}`);
+      await api.get(`/u/${debounceUsername}`);
       setIsAvailable(true);
     } catch (e) {
       setIsAvailable(false);
@@ -56,14 +51,14 @@ const Register = () => {
   useEffect(() => {
     checkUsername();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [username]);
+  }, [debounceUsername]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-black">
       <div className="w-full max-w-md p-8 space-y-8 bg-card rounded-lg shadow-md">
         <h2 className="text-2xl font-bold text-center">Signup to Threads</h2>
         <form className="space-y-6" onSubmit={handleSignup}>
-          <div>
+          <div className="relative">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-foreground/50"
@@ -98,6 +93,9 @@ const Register = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
+            {username && isUsernameAvailable && (
+              <span className="mt-4 text-green-400">Available !</span>
+            )}
             {!isUsernameAvailable && (
               <span className="text-red-900">Not Awailable</span>
             )}
