@@ -2,7 +2,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import useAuth from "../hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getUserData } from "../api/data";
 import { loginUser } from "../api/action";
 
@@ -11,16 +11,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from: string | null = location.state?.from;
 
   useEffect(() => {
     const accessToken = sessionStorage.getItem("access") as string;
     if (!auth && accessToken) {
       getUserData().then((d) => {
         setAuth(d);
-        navigate("/");
+        navigate(from ?? "/");
       });
     }
-  });
+  }, [auth, navigate, setAuth, from]);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

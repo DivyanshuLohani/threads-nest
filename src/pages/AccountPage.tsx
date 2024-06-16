@@ -1,4 +1,3 @@
-import { ScrollArea } from "@radix-ui/react-scroll-area";
 import UserInfo from "../components/account/UserInfo";
 import { Button } from "../components/ui/button";
 import { useEffect, useState } from "react";
@@ -7,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { IThreadProfile } from "../types/client";
 import useAuth from "../hooks/useAuth";
 import { followUser, unfollowUser } from "../api/action";
+import EditProfile from "../components/account/EditProfile";
 
 export default function AccountPage() {
   const [user, setUser] = useState<IThreadProfile | null>(null);
@@ -15,13 +15,24 @@ export default function AccountPage() {
   const params = useParams();
 
   useEffect(() => {
-    getUserDataWithUsername(params.username ?? "").then((u) => {
-      if (u) {
-        setUser(u);
-        if (u.followed) setFollowed(true);
-      }
-    });
-  }, [params.username]);
+    if (params.username === auth?.username) {
+      setUser({
+        fullName: auth?.fullName || "",
+        bio: auth?.bio || "",
+        username: auth?.username || "",
+        profilePicture: auth?.profilePicture ?? "",
+        followed: false,
+        followersCount: 0,
+        followingCount: 0,
+      });
+    } else
+      getUserDataWithUsername(params.username ?? "").then((u) => {
+        if (u) {
+          setUser(u);
+          if (u.followed) setFollowed(true);
+        }
+      });
+  }, [params.username, auth]);
 
   const handleFollow = async () => {
     if (followed) {
@@ -34,29 +45,25 @@ export default function AccountPage() {
   };
 
   return (
-    <main className=" dark:bg-background dark:text-white w-screen h-screen flex justify-center  flex-col items-center">
-      <ScrollArea className="flex flex-col py-2 px-1 min-h-screen w-full md:w-3/6 rounded-t-3xl border bg-secondary/30 overflow-x-hidden">
-        {user && <UserInfo user={user} />}
-        <div className="px-6">
-          {auth?.username === params.username ? (
-            <Button className="w-full font-bold" variant={"outline"}>
-              Edit Profile
-            </Button>
-          ) : !followed ? (
-            <Button className="w-full font-bold" onClick={handleFollow}>
-              Follow
-            </Button>
-          ) : (
-            <Button
-              className="w-full font-bold"
-              onClick={handleFollow}
-              variant={"outline"}
-            >
-              Following
-            </Button>
-          )}
-        </div>
-      </ScrollArea>
-    </main>
+    <>
+      {user && <UserInfo user={user} />}
+      <div className="px-6">
+        {auth?.username === params.username ? (
+          <EditProfile />
+        ) : !followed ? (
+          <Button className="w-full font-bold" onClick={handleFollow}>
+            Follow
+          </Button>
+        ) : (
+          <Button
+            className="w-full font-bold"
+            onClick={handleFollow}
+            variant={"outline"}
+          >
+            Following
+          </Button>
+        )}
+      </div>
+    </>
   );
 }

@@ -39,3 +39,22 @@ export async function followUser(username: string) {
 export async function unfollowUser(username: string) {
   await api.delete(`/users/${username}/follow/`);
 }
+
+export async function updateUser(
+  username: string,
+  fullName: string,
+  bio: string,
+  profilePicture: string
+) {
+  try {
+    const response = await api.patch("/users/update/", {
+      username,
+      fullName,
+      bio,
+      profilePicture,
+    });
+    return response.data;
+  } catch {
+    return null;
+  }
+}

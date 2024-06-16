@@ -7,6 +7,8 @@ import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import Register from "./pages/Register";
 import AccountPage from "./pages/AccountPage";
+import ActivityPage from "./pages/ActivityPage";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
@@ -22,10 +24,12 @@ function App() {
               {/* Protected Routes */}
               <Route element={<RequireAuth />}>
                 <Route path="/" element={<HomePage />}></Route>
+                <Route path="/activity" element={<ActivityPage />}></Route>
                 <Route path="/:username" element={<AccountPage />}></Route>
               </Route>
             </Route>
           </Routes>
+          <Toaster />
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

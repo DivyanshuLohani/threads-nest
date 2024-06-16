@@ -29,3 +29,12 @@ export async function getUserDataWithUsername(
     return null;
   }
 }
+
+export async function getNotifications() {
+  try {
+    const response = await api.get("/users/notifications/");
+    return response.data;
+  } catch {
+    return [];
+  }
+}

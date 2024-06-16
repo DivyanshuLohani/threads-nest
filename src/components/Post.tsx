@@ -5,6 +5,7 @@ import { timeAgo } from "../lib/utils";
 import { useEffect, useState } from "react";
 import { FaHeart } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { UserProfileUsername } from "./UserProfileUsername";
 
 export default function Post({ thread }: { thread: IThread }) {
   const [liked, setLiked] = useState(false);
@@ -14,6 +15,10 @@ export default function Post({ thread }: { thread: IThread }) {
     if (liked) setLikes((l) => l + 1);
     else setLikes((l) => Math.max(l - 1, 0));
   }, [liked]);
+
+  const handleLike = async () => {
+    setLiked(!liked);
+  };
 
   // useEffect(() => {
   //   if (thread.)
@@ -30,12 +35,12 @@ export default function Post({ thread }: { thread: IThread }) {
         />
       </div>
       <div className="flex flex-col">
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Link
             to={`/${thread.user.username}`}
             className="font-bold hover:underline cursor-pointer"
           >
-            {thread.user.username}
+            <UserProfileUsername user={thread.user} />
           </Link>
           <span className="text-foreground/30">
             {timeAgo(thread.createdAt)}
@@ -56,7 +61,9 @@ export default function Post({ thread }: { thread: IThread }) {
           <ul className="flex gap-3 w-full -ml-3">
             <li
               className="hover:text-primary cursor-pointer px-3 py-2 flex items-center justify-center rounded-lg  hover:bg-foreground/10 transition-colors duration-300"
-              onClick={() => setLiked(!liked)}
+              onClick={() => {
+                handleLike();
+              }}
             >
               {liked ? <FaHeart className="text-red-900" /> : <FaRegHeart />}
               <span className="text-lg ml-1">{likes}</span>

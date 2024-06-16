@@ -16,13 +16,13 @@ export function timeAgo(date: Date | string) {
   const days = Math.floor(hours / 24);
 
   if (days > 0) {
-    return `${days}d ago`;
+    return `${days}d`;
   } else if (hours > 0) {
-    return `${hours}h ago`;
+    return `${hours}h`;
   } else if (minutes > 0) {
-    return `${minutes}m ago`;
+    return `${minutes}m`;
   } else if (seconds > 0) {
-    return `${seconds}s ago`;
+    return `${seconds}s`;
   } else {
     return "now";
   }

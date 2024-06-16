@@ -9,39 +9,49 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import useMediaQuery from "../hooks/useMediaQuery";
-
-// Define the links array
-const links = [
-  {
-    name: "Home",
-    element: FaHouse,
-    href: "/",
-  },
-  {
-    name: "Search",
-    element: FaSearch,
-    href: "/search",
-  },
-  {
-    name: "AddPost",
-    element: FaRegSquarePlus,
-    href: "Add",
-    mobileOnly: true,
-  },
-  {
-    name: "Favorites",
-    element: FaRegHeart,
-    href: "/favorites",
-  },
-  {
-    name: "Profile",
-    element: FaRegUser,
-    href: "/profile",
-  },
-];
+import useAuth from "../hooks/useAuth";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Button } from "./ui/button";
+import { Label } from "./ui/label";
+import { Switch } from "./ui/switch";
+import { useTheme } from "./theme-provider";
 
 export default function Navbar() {
+  const { auth, setAuth } = useAuth();
+
+  const links = [
+    {
+      name: "Home",
+      element: FaHouse,
+      href: "/",
+    },
+    {
+      name: "Search",
+      element: FaSearch,
+      href: "/search",
+    },
+    {
+      name: "AddPost",
+      element: FaRegSquarePlus,
+      href: "Add",
+      mobileOnly: true,
+    },
+    {
+      name: "Favorites",
+      element: FaRegHeart,
+      href: "/activity",
+    },
+    {
+      name: "Profile",
+      element: FaRegUser,
+      href: `/${auth?.username}`,
+    },
+  ];
+
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const { theme, setTheme } = useTheme();
+
   return (
     <>
       <aside className="fixed hidden md:block top-0 left-0 h-screen">
@@ -67,7 +77,37 @@ export default function Navbar() {
           </div>
 
           <div className="p-5 text-3xl hover:text-white text-gray-400 cursor-pointer">
-            <FaGear />
+            <Popover>
+              <PopoverTrigger>
+                <FaGear />
+              </PopoverTrigger>
+              <PopoverContent side="right">
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="dark-mode">Dark Mode</Label>
+                  <Switch
+                    id="dark-mode"
+                    checked={theme === "dark"}
+                    onCheckedChange={(e) => {
+                      if (e) {
+                        setTheme("dark");
+                      } else {
+                        setTheme("light");
+                      }
+                    }}
+                  />
+                </div>
+                <Button
+                  variant={"outline"}
+                  className="w-full mt-10"
+                  onClick={() => {
+                    sessionStorage.clear();
+                    setAuth(null);
+                  }}
+                >
+                  Log Out
+                </Button>
+              </PopoverContent>
+            </Popover>
           </div>
         </nav>
       </aside>

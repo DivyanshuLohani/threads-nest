@@ -9,7 +9,6 @@ const api = axios.create({
 api.interceptors.request.use(
   function (config) {
     const accessToken = sessionStorage.getItem("access") as string;
-    console.log("Interceptor", accessToken);
     if (!accessToken) return config;
     config.headers.Authorization = `Bearer ${accessToken}`;
     return config;
