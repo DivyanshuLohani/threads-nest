@@ -1,10 +1,11 @@
-# Threads Clone Client
+# Thread Nest
+
 
 
 
 ## Overview
 
-Threads clone with features to post threads, follow other users, and interact with posts. This repository contains the client-side application built using React.js.
+Thread Nest with features to post threads, follow other users, and interact with posts. This repository contains the client-side application built using React.js.
 
 ## Features
 
@@ -35,8 +36,8 @@ Before you begin, ensure you have met the following requirements:
 First, clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/your-username/threads-clone-client.git
-cd threads-clone-client
-npm i
+git clone https://github.com/DivyanshuLohani/threads-nest.git
+cd threads-nest
+npm install
 npm run dev
 ```
